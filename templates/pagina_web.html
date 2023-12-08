@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Clique!</title>
+    <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+    <style>
+
+        *{
+            padding: 0;
+            margin: 0;
+            box-sizing: border-box;
+            font-family: Arial, Helvetica, sans-serif;
+        }
+        body {
+            background-color: blueviolet;
+        }
+
+        .container {
+            height: 250px;
+            width: 400px;
+            align-items: center;
+            border: 1px solid;
+            border-radius: 5px;
+            padding: auto;
+            margin: auto;
+            margin-top: 15%;
+            text-align: center;
+            background-color: rgb(159, 64, 248);
+        }
+
+        .clique {
+            margin-top: 25px;
+            margin-right: 8%;
+            align-items: center;
+            text-align: center;
+            padding: 5px;
+        }
+
+        #downloadForm {
+            padding: 10px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .entrada {
+            margin-top: 20px;
+            padding: 10px;
+            width: 270px;
+            border: none;
+            border-radius: 8px;
+        }
+
+
+        .butao {
+            padding: 10px;
+            height: 60px;
+            width: 300px;
+            margin-top: 50px;
+            margin-right: 2%;
+            background-color: rgb(88, 16, 155);
+            border-radius: 10px;
+            border: none;
+            transform: 0.5s;
+            cursor: pointer;
+        }
+
+        .butao:hover{
+            background-color: rgb(136, 42, 224);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2 class="clique">COLE AQUI!!</h2>
+        <form action="/download" method="post" id="downloadForm">
+            <label for="videoURL"></label>
+            <input type="text" class="entrada" name="video_url" id="videoUrl" required>
+            <button class="butao" id="button" type="submit" value="URL_DO_VIDEO">DOWNLOAD</button>
+        </form>
+    </div>
+
+    <script>
+       function downloadVideo() {
+            const videoURL = document.getElementById('videoUrl').value;
+
+            fetch('/download', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                },
+                body: 'video_url=' + encodeURIComponent(videoURL),
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Erro ao baixar vídeo. Verifique a URL e tente novamente.');
+                }
+                return response.blob();
+            })
+            .then(blob => {
+                const url = window.URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = 'video.mp4';
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                window.URL.revokeObjectURL(url);
+            })
+            .catch(error => {
+                console.error('Erro na requisição fetch:', error);
+            });
+        }
+    </script>
+</body>
+</html>
